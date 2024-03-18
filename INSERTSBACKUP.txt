@@ -1,0 +1,165 @@
+--INSERTA DATOS DE LOCATIONS
+
+INSERT INTO Locations (name, parent_id) 
+			    VALUES('San José', NULL)
+INSERT INTO Locations (name, parent_id) 
+			    VALUES('Alajuela', NULL)
+INSERT INTO Locations (name, parent_id) 
+			    VALUES('Cartago', NULL)
+INSERT INTO Locations (name, parent_id) 
+			    VALUES('Heredia', NULL)
+INSERT INTO Locations (name, parent_id) 
+			    VALUES('Guanacaste', NULL)
+INSERT INTO Locations (name, parent_id) 
+			    VALUES('Puntarenas', NULL)
+INSERT INTO Locations (name, parent_id) 
+			    VALUES('Limón', NULL)
+
+-- San José
+INSERT INTO Locations (name, parent_id) VALUES ('San José', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Escazú', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Desamparados', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Puriscal', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Tarrazú', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Aserrí', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Mora', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Goicoechea', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Santa Ana', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Alajuelita', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Vásquez de Coronado', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Acosta', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Tibás', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Moravia', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Montes de Oca', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Turrubares', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Dota', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Curridabat', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('Pérez Zeledón', 1);
+INSERT INTO Locations (name, parent_id) VALUES ('León Cortés Castro', 1);
+
+-- Alajuela
+INSERT INTO Locations (name, parent_id) VALUES ('Alajuela', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('San Ramón', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Grecia', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('San Mateo', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Atenas', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Naranjo', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Palmares', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Poás', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Orotina', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('San Carlos', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Zarcero', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Sarchí', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Upala', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Los Chiles', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Guatuso', 2);
+INSERT INTO Locations (name, parent_id) VALUES ('Río Cuarto', 2);
+
+-- Cartago
+INSERT INTO Locations (name, parent_id) VALUES ('Cartago', 3);
+INSERT INTO Locations (name, parent_id) VALUES ('Paraíso', 3);
+INSERT INTO Locations (name, parent_id) VALUES ('La Unión', 3);
+INSERT INTO Locations (name, parent_id) VALUES ('Jiménez', 3);
+INSERT INTO Locations (name, parent_id) VALUES ('Turrialba', 3);
+INSERT INTO Locations (name, parent_id) VALUES ('Alvarado', 3);
+INSERT INTO Locations (name, parent_id) VALUES ('Oreamuno', 3);
+INSERT INTO Locations (name, parent_id) VALUES ('El Guarco', 3);
+
+-- Heredia
+INSERT INTO Locations (name, parent_id) VALUES ('Heredia', 4);
+INSERT INTO Locations (name, parent_id) VALUES ('Barva', 4);
+INSERT INTO Locations (name, parent_id) VALUES ('Santo Domingo', 4);
+INSERT INTO Locations (name, parent_id) VALUES ('Santa Bárbara', 4);
+INSERT INTO Locations (name, parent_id) VALUES ('San Rafael', 4);
+INSERT INTO Locations (name, parent_id) VALUES ('San Isidro', 4);
+INSERT INTO Locations (name, parent_id) VALUES ('Belén', 4);
+INSERT INTO Locations (name, parent_id) VALUES ('Flores', 4);
+INSERT INTO Locations (name, parent_id) VALUES ('San Pablo', 4);
+INSERT INTO Locations (name, parent_id) VALUES ('Sarapiquí', 4);
+
+-- Guanacaste
+INSERT INTO Locations (name, parent_id) VALUES ('Liberia', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('Nicoya', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('Santa Cruz', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('Bagaces', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('Carrillo', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('Cañas', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('Abangares', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('Tilarán', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('Nandayure', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('La Cruz', 5);
+INSERT INTO Locations (name, parent_id) VALUES ('Hojancha', 5);
+
+-- Puntarenas
+INSERT INTO Locations (name, parent_id) VALUES ('Puntarenas', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Esparza', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Buenos Aires', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Montes de Oro', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Osa', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Quepos', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Golfito', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Coto Brus', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Parrita', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Corredores', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Garabito', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Monteverde', 6);
+INSERT INTO Locations (name, parent_id) VALUES ('Puerto Jiménez', 6);
+
+-- Limón
+INSERT INTO Locations (name, parent_id) VALUES ('Limón', 7);
+INSERT INTO Locations (name, parent_id) VALUES ('Pococí', 7);
+INSERT INTO Locations (name, parent_id) VALUES ('Siquirres', 7);
+INSERT INTO Locations (name, parent_id) VALUES ('Talamanca', 7);
+INSERT INTO Locations (name, parent_id) VALUES ('Matina', 7);
+INSERT INTO Locations (name, parent_id) VALUES ('Guácimo', 7);
+
+--DISTRITOS
+
+--SAN JOSÉ, SAN JOSÉ
+INSERT INTO Locations(name, parent_id) VALUES('San José', 8);
+INSERT INTO Locations(name, parent_id) VALUES('Carmen', 8);
+INSERT INTO Locations(name, parent_id) VALUES('Merced', 8);
+INSERT INTO Locations(name, parent_id) VALUES('Hospital', 8);
+INSERT INTO Locations(name, parent_id) VALUES('Catedral', 8);
+INSERT INTO Locations(name, parent_id) VALUES('Zapote', 8);
+INSERT INTO Locations(name, parent_id) VALUES('San Francisco de Dos Ríos', 8);
+INSERT INTO Locations(name, parent_id) VALUES('Uruca', 8);
+INSERT INTO Locations(name, parent_id) VALUES('Mata Redonda', 8);
+INSERT INTO Locations(name, parent_id) VALUES('Pavas', 8);
+INSERT INTO Locations(name, parent_id) VALUES('Hatillo', 8);
+INSERT INTO Locations(name, parent_id) VALUES('San Sebastián', 8);
+
+-- SAN JOSÉ, ESCAZÚ
+INSERT INTO Locations(name, parent_id) VALUES('Escazú', 9);
+INSERT INTO Locations(name, parent_id) VALUES('San Antonio', 9);
+INSERT INTO Locations(name, parent_id) VALUES('San Rafael', 9);
+
+--SAN JOSÉ,	DESAMPARADOS
+INSERT INTO Locations(name, parent_id) VALUES('Desamparados', 10);
+INSERT INTO Locations(name, parent_id) VALUES('San Miguel', 10);
+INSERT INTO Locations(name, parent_id) VALUES('San Juan de Dios', 10);
+INSERT INTO Locations(name, parent_id) VALUES('San Rafael Arriba', 10);
+INSERT INTO Locations(name, parent_id) VALUES('San Antonio', 10);
+INSERT INTO Locations(name, parent_id) VALUES('Frailes', 10);
+INSERT INTO Locations(name, parent_id) VALUES('Patarrá', 10);
+INSERT INTO Locations(name, parent_id) VALUES('San Cristóbal', 10);
+INSERT INTO Locations(name, parent_id) VALUES('Rosario', 10);
+INSERT INTO Locations(name, parent_id) VALUES('Damas', 10);
+INSERT INTO Locations(name, parent_id) VALUES('San Rafael Abajo', 10);
+
+
+--INSERT ROLES
+INSERT INTO Roles(role_type) 
+VALUES
+('Paciente'),
+('Profesional');
+
+--INSERT SPECIALTIES
+INSERT INTO Specialties(specialty_name,description)VALUES
+	('Administrador', 'Responsable de la gestión y supervisión general del sistema u organización.'),
+    ('Enfermero', 'Profesional de la salud que brinda cuidados directos a los pacientes bajo supervisión médica.'),
+    ('Secretario', 'Proporciona apoyo administrativo y de oficina en entornos médicos.'),
+    ('Cardiólogo', 'Especialista médico en el diagnóstico y tratamiento de enfermedades del corazón y los vasos sanguíneos.'),
+    ('Pediatra', 'Médico especializado en el cuidado de niños y adolescentes.'),
+    ('Médico General', 'Profesional de la salud que brinda atención médica integral a pacientes de todas las edades.');
+
