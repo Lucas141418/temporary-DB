@@ -1,5 +1,4 @@
 USE [NOVA_DEV_DB]
-
 --Creacion de tablas
 CREATE TABLE Roles(
 	role_id INTEGER PRIMARY KEY NOT NULL IDENTITY(1,1),
@@ -211,6 +210,7 @@ CREATE TABLE Exam_users (
 );
 GO
 
+
 --Vistas
 CREATE VIEW VW_PROVINCIA_CANTON_DISTRITO
 as
@@ -293,4 +293,105 @@ AS
 		print('No se realizo el SP desde SQL, error: ' +   ERROR_MESSAGE())
             ROLLBACK TRANSACTION
     END CATCH
+
+
+--SP Examenes 
+--CREATE EXAM
+CREATE PROCEDURE SP_CREATE_EXAM_FOR_PACIENT
+    @examen_type VARCHAR(25),
+    @result VARCHAR(255),
+	@patient_id INT
+AS
+	DECLARE @temp_id INT
+	BEGIN
+		SET NOCOUNT ON
+		BEGIN TRY
+        BEGIN TRANSACTION
+
+			INSERT INTO Exams
+			(
+				examen_type,
+				result,
+				patient_id
+			)
+			VALUES(
+				@examen_type,
+				@result,
+				@patient_id
+			)
+
+			SET @temp_id = SCOPE_IDENTITY()
+			INSERT INTO Exam_users (exam_id, user_id) VALUES(@temp_id, @patient_id)
+			COMMIT TRANSACTION;
+		END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            DECLARE @Error_message VARCHAR(MAX);
+            DECLARE @Error_status INT;
+            SET @Error_message = ERROR_MESSAGE();
+            SET @Error_status = ERROR_STATE();
+            ROLLBACK TRANSACTION;
+            THROW @Error_status, 'Error updating exam SQL: ',  @Error_message;
+        END;
+    END CATCH;
+END;
+--SP FOR UPDATING EXAMS
+CREATE PROCEDURE SP_UPDATE_EXAMS_BY_EXAM_ID
+    @exam_id int,
+    @examen_type VARCHAR(25),
+    @result VARCHAR(255)
+AS
+	BEGIN
+		SET NOCOUNT ON;
+		BEGIN TRY
+        BEGIN TRANSACTION;
+        
+			UPDATE Exams
+				SET
+					examen_type = @examen_type,
+					result = @result
+				WHERE exam_id = @exam_id;
+			COMMIT TRANSACTION;
+		END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            DECLARE @Error_message VARCHAR(MAX);
+            DECLARE @Error_status INT;
+            SET @Error_message = ERROR_MESSAGE();
+            SET @Error_status = ERROR_STATE();
+            ROLLBACK TRANSACTION;
+            THROW @Error_status, 'Error updating exam SQL: ',  @Error_message;
+        END;
+    END CATCH;
+END;
+--SP GET EXAMS 
+CREATE PROCEDURE SP_GET_EXAMS_BY_PATIENT_ID
+    @patient_id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        SELECT E.examen_type, E.result, E.patient_id,E.exam_id
+               U.id, U.date_of_birth, U.email, U.name, U.lastname, U.phone 
+        FROM Exams E
+        INNER JOIN Exam_users EU ON E.exam_id = EU.exam_id
+        INNER JOIN Users U ON EU.user_id = U.user_id
+        WHERE U.user_id = @patient_id;
+    END TRY
+    BEGIN CATCH
+        DECLARE @Error_message VARCHAR(MAX);
+        DECLARE @Error_status INT;
+        SET @Error_message = ERROR_MESSAGE();
+        SET @Error_status = ERROR_STATE();
+        THROW @Error_status, 'Error retrieving exams for patient: ', @Error_message;
+    END CATCH;
+END;
+
+EXEC SP_GET_EXAMS_BY_PATIENT_ID 4
+
+
+select * from Exams
 
