@@ -71,15 +71,17 @@ CREATE TABLE Locations(
     REFERENCES Locations(location_id)
 )
 
+
 CREATE TABLE Headquarters(
     hq_id int PRIMARY KEY IDENTITY(1,1) NOT NULL,
     name varchar(50) not null,
     description varchar(255) not null,
     date_incorporation date,
-    picture VARBINARY(MAX),
+    picture VARCHAR(MAX),
     other_sings varchar(255),
     location_map Geography,
     location_id INT,
+	active INT NOT NULL DEFAULT 1,
 	CONSTRAINT FK_HEADQUARTERS_LOCATION_ID FOREIGN KEY (location_id) REFERENCES Locations(location_id)
 );
 
@@ -118,12 +120,17 @@ CREATE TABLE User_specialties(
 );
 GO
 CREATE TABLE Passwords(
+	password_id int IDENTITY(1,1) NOT NULL,
     user_id INT NOT NULL,
-    password BINARY NOT NULL,
-    CONSTRAINT PK_PASSWORDS PRIMARY KEY CLUSTERED (user_id),
+    password VARBINARY (MAX) NOT NULL,
+	registration_time DATETIME2 DEFAULT GETDATE(),
+    CONSTRAINT PK_PASSWORDS PRIMARY KEY CLUSTERED (password_id),
     CONSTRAINT FK_PASSWORDS_USERS FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 GO
+
+ALTER TABLE Passwords
+
 CREATE TABLE Otps (
     user_id INT NOT NULL,
     expiration_time DATETIME NOT NULL,
@@ -389,9 +396,288 @@ BEGIN
         THROW @Error_status, 'Error retrieving exams for patient: ', @Error_message;
     END CATCH;
 END;
+--SP MEdical RECORD
 
-EXEC SP_GET_EXAMS_BY_PATIENT_ID 4
+CREATE PROCEDURE SP_CREATE_MEDICAL_RECORD
+	@medical_prescription VARCHAR(MAX),
+	@exam_results VARCHAR(MAX),
+	@family_history VARCHAR (MAX),
+	@patient_id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		BEGIN TRANSACTION;
+
+		DECLARE @temp_id INT;
+
+		INSERT INTO Medical_Records
+		(
+			medical_prescription,
+			exam_results,
+			family_history,
+			patient_id
+		)
+		VALUES (
+			@medical_prescription,
+			@exam_results,
+			@family_history,
+			@patient_id
+		);
+
+			SET @temp_id = SCOPE_IDENTITY()
+			UPDATE Users SET medical_record_id = @temp_id WHERE user_id = @patient_id
+			COMMIT TRANSACTION;
+		END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            DECLARE @Error_message VARCHAR(MAX);
+            DECLARE @Error_status INT;
+            SET @Error_message = ERROR_MESSAGE();
+            SET @Error_status = ERROR_STATE();
+            ROLLBACK TRANSACTION;
+            THROW @Error_status, 'Error updating exam SQL: ',  @Error_message;
+        END;
+    END CATCH;
+END;
+
+--GET MD by Patient
+CREATE PROCEDURE SP_GET_MEDICAL_RECORD_BY_PatientId
+    @patient_id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        SELECT ME.medical_prescription, ME.exam_results, ME.family_history,
+               U.id, U.date_of_birth, U.email, U.name, U.lastname, U.phone 
+        FROM Medical_Records ME
+        INNER JOIN Users U ON ME.patient_id = U.user_id
+        WHERE U.user_id = @patient_id;
+    END TRY
+    BEGIN CATCH
+        DECLARE @Error_message VARCHAR(MAX);
+        DECLARE @Error_status INT;
+        SET @Error_message = ERROR_MESSAGE();
+        SET @Error_status = ERROR_STATE();
+        THROW @Error_status, 'Error retrieving MEDICAL RECORD for patient: ', @Error_message;
+    END CATCH;
+END;
+--UPDATE Medical Record
+CREATE PROCEDURE SP_UPDATE_MEDICAL_RECORD
+	@medical_record_id int,
+	@medical_prescription VARCHAR(MAX),
+	@exam_results VARCHAR(MAX),
+	@family_history VARCHAR (MAX)
+AS
+	BEGIN
+		SET NOCOUNT ON;
+		BEGIN TRY
+        BEGIN TRANSACTION;
+        
+			UPDATE Medical_Records
+				SET
+					medical_prescription = @medical_prescription,
+					exam_results = @exam_results,
+					family_history = @family_history
+				WHERE medical_record_id = @medical_record_id;
+			COMMIT TRANSACTION;
+		END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            DECLARE @Error_message VARCHAR(MAX);
+            DECLARE @Error_status INT;
+            SET @Error_message = ERROR_MESSAGE();
+            SET @Error_status = ERROR_STATE();
+            ROLLBACK TRANSACTION;
+            THROW @Error_status, 'Error updating medicalRecord SQL: ',  @Error_message;
+        END;
+    END CATCH;
+END
+--SP GET ALL HQ
+CREATE PROCEDURE SP_HEADQUARTERS_GET_ALL_ACTIVE
+AS
+BEGIN
+    SELECT * FROM Headquarters WHERE active = 1; 
+END
+
+--SP INSERT HQ
+CREATE PROCEDURE [dbo].[SP_HEADQUARTERS_INSERT]
+    @name VARCHAR(50),
+    @description VARCHAR(255),
+    @date_incorporation DATE,
+    @picture VARCHAR(MAX),
+    @other_sings VARCHAR(255),
+    @location_map VARCHAR(MAX),
+    @location_id INT,
+    @active INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        INSERT INTO Headquarters (name, description, date_incorporation, picture, other_sings, location_map, location_id, active)
+        VALUES (@name, @description, @date_incorporation, @picture, @other_sings, geography::STGeomFromText('POINT('+@location_map+')', 4326), @location_id, @active);
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END;
+        THROW;
+    END CATCH;
+END;
+--SP DELETE HQ
+CREATE PROCEDURE SP_HEADQUARTERS_DELETE
+    @hq_id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        UPDATE Headquarters
+        SET active = 0 -- Marcar como inactivo en lugar de eliminar físicamente
+        WHERE hq_id = @hq_id;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END;
+        THROW;
+    END CATCH;
+END
+--SP GET ID HQ
+CREATE PROCEDURE SP_HEADQUARTERS_GET_BY_ID
+    @hq_id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        SELECT * FROM Headquarters WHERE hq_id = @hq_id;
+    END TRY
+    BEGIN CATCH
+        THROW;
+    END CATCH;
+END
+--SP UPDATE HQ
+/** Object:  StoredProcedure [dbo].[SP_HEADQUARTERS_UPDATE]    Script Date: 3/23/2024 10:42:02 AM **/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SP_HEADQUARTERS_UPDATE]
+    @hq_id INT,
+    @name VARCHAR(50),
+    @description VARCHAR(255),
+    @date_incorporation DATE,
+    @picture VARCHAR(MAX),
+    @other_sings VARCHAR(255),
+    @location_map VARCHAR(MAX),
+    @location_id INT,
+    @active INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        UPDATE Headquarters
+        SET name = @name, description = @description, date_incorporation = @date_incorporation,
+            picture = @picture, other_sings = @other_sings, location_map = geography::STGeomFromText('POINT('+@location_map+')', 4326),
+            location_id = @location_id, active = @active
+        WHERE hq_id = @hq_id;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END;
+        THROW;
+    END CATCH;
+END
+--INSERT INTO EJEMPLO
+INSERT INTO Headquarters (name, description, date_incorporation, picture, other_sings, location_map, location_id)
+VALUES ('Nombre de la Sede', 'Descripción de la Sede', '2024-03-23', 'ruta/de/la/imagen.jpg', 'Otras señales', 'POINT(-74.0059 40.7128)', 1);
 
 
-select * from Exams
+--SP LogIN
+--Function to search the last password
+CREATE FUNCTION F_GET_THE_LAST_PASSWORD(@P_user_id INT) RETURNS VARCHAR(MAX)
+AS
+BEGIN
+    DECLARE @LAST_PASSWORD VARCHAR(MAX);
 
+    SELECT TOP 1 @LAST_PASSWORD = password
+    FROM Passwords
+    WHERE user_id = @P_user_id
+    ORDER BY registration_time DESC; 
+
+    RETURN @LAST_PASSWORD;
+END;
+
+CREATE PROCEDURE SP_VERIFY_USER
+    @Email VARCHAR(MAX),
+    @Password VARCHAR(MAX)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @UserId INT
+    DECLARE @last_Password VARCHAR(MAX)
+    DECLARE @LoginSuccess BIT
+    DECLARE @UserName VARCHAR(MAX)
+	DECLARE @UserLastName VARCHAR(MAX)
+	DECLARE @UserRole VARCHAR(255)
+	DECLARE @UserEmail VARCHAR(MAX)
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        SELECT @UserId = U.user_id FROM Users U
+        WHERE U.email = @Email;
+
+        IF @UserId IS NOT NULL
+        BEGIN
+            SET @last_Password = dbo.F_GET_THE_LAST_PASSWORD(@UserId);
+            IF @last_Password = @Password
+            BEGIN
+                SET @LoginSuccess = 1;
+                SELECT @UserName = U.name, @UserLastName = U.lastname, @UserEmail = U.email FROM Users U
+                WHERE U.user_id = @UserId;
+				SELECT @UserRole = R.role_type FROM User_roles UR INNER JOIN Roles R ON UR.user_id = @UserId WHERE R.role_id = UR.role_id
+            END
+            ELSE
+            BEGIN
+                SET @LoginSuccess = 0;
+            END
+        END
+        ELSE
+        BEGIN
+            SET @LoginSuccess = 0;
+        END;
+        IF @@TRANCOUNT > 0
+            COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        SELECT ERROR_MESSAGE() AS ErrorMessage;
+    END CATCH;
+    SELECT @LoginSuccess AS LoginSuccess, @UserName AS UserName, @UserLastName AS UserLastName, @UserEmail AS UserEmail, @UserRole AS UserRole;
+END;
+
+
+
+
+select *  from Passwords
+use NOVA_TEST_LOCAL
+EXEC SP_VERIFY_USER 'janesmith@example.com', 'passwordTestLast24'
